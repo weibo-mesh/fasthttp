@@ -1980,16 +1980,9 @@ func (s *Server) serveConn(c net.Conn) error {
 			break
 		}
 
-		// Only flush the writer if we don't have another request in the pipeline.
-		// This is a big of an ugly optimization for https://www.techempower.com/benchmarks/
-		// This benchmark will send 16 pipelined requests. It is faster to pack as many responses
-		// in a TCP packet and send it back at once than waiting for a flush every request.
-		// In real world circumstances this behaviour could be argued as being wrong.
-		if br == nil || br.Buffered() == 0 || connectionClose {
-			err = bw.Flush()
-			if err != nil {
-				break
-			}
+		err = bw.Flush()
+		if err != nil {
+			break
 		}
 		if connectionClose {
 			break
