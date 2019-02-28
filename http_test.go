@@ -1499,9 +1499,6 @@ func testResponseSuccess(t *testing.T, statusCode int, contentType, serverName, 
 func TestRequestWriteError(t *testing.T) {
 	// no host
 	testRequestWriteError(t, "", "/foo/bar", "", "", "")
-
-	// get with body
-	testRequestWriteError(t, "GET", "/foo/bar", "aaa.com", "", "foobar")
 }
 
 func testRequestWriteError(t *testing.T, method, requestURI, host, userAgent, body string) {

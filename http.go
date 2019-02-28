@@ -1136,11 +1136,11 @@ func (req *Request) Write(w *bufio.Writer) error {
 		req.Header.SetMultipartFormBoundary(req.multipartFormBoundary)
 	}
 
-	hasBody := !req.Header.ignoreBody()
+	if len(body) == 0 && !req.Header.ignoreBody() {
+		body = req.postArgs.QueryString()
+	}
+	hasBody := len(body) > 0
 	if hasBody {
-		if len(body) == 0 {
-			body = req.postArgs.QueryString()
-		}
 		req.Header.SetContentLength(len(body))
 	}
 	if err = req.Header.Write(w); err != nil {
@@ -1148,8 +1148,6 @@ func (req *Request) Write(w *bufio.Writer) error {
 	}
 	if hasBody {
 		_, err = w.Write(body)
-	} else if len(body) > 0 {
-		return fmt.Errorf("non-zero body for non-POST request. body=%q", body)
 	}
 	return err
 }

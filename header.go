@@ -1594,18 +1594,13 @@ func (h *RequestHeader) AppendBytes(dst []byte) []byte {
 		dst = appendHeaderLine(dst, strHost, host)
 	}
 
+	// TODO: Here just for a proxy server. For a normal client, we may need to set a default Content-Type
 	contentType := h.ContentType()
-	if !h.ignoreBody() {
-		if len(contentType) == 0 {
-			contentType = strPostArgsContentType
-		}
+	if len(contentType) > 0 {
 		dst = appendHeaderLine(dst, strContentType, contentType)
-
-		if len(h.contentLengthBytes) > 0 {
-			dst = appendHeaderLine(dst, strContentLength, h.contentLengthBytes)
-		}
-	} else if len(contentType) > 0 {
-		dst = appendHeaderLine(dst, strContentType, contentType)
+	}
+	if len(h.contentLengthBytes) > 0 {
+		dst = appendHeaderLine(dst, strContentLength, h.contentLengthBytes)
 	}
 
 	for i, n := 0, len(h.h); i < n; i++ {
